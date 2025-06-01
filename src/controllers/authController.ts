@@ -41,12 +41,44 @@ export const registerUser = async (
         const hashSalt = 10;
         const hashedPassword = await bcrypt.hash(password, hashSalt);
 
-        // Create new user
+        // Create new user with specific default values
         const newUser = await authModel.create({
             firstName,
             lastName,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            // Specific default values
+            photoUrl: "https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg",
+            address: "Not provided",
+            phone: "Not provided",
+            dob: null,
+            socialMedia: {
+                facebook: "www.facebook.com",
+                twitter: "www.twitter.com",
+                linkedin: "www.linkedin.com",
+                instagram: "www.instagram.com"
+            },
+            courses: [
+                {
+                    id: 1,
+                    name: "Data Structures and Algorithms",
+                    progress: 50
+                },
+                {
+                    id: 2,
+                    name: "Cloud Computing",
+                    progress: 30
+                },
+                {
+                    id: 3,
+                    name: "Networking",
+                    progress: 70
+                }
+            ],
+            loginActivity: {
+                firstLogin: new Date(),
+                lastLogin: new Date()
+            }
         });
 
         // Generate JWT token
@@ -59,7 +91,19 @@ export const registerUser = async (
         // Return response
         res.status(201).json({
             message: "User registered successfully",
-            accessToken
+            accessToken,
+            user: {
+                id: newUser._id,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email,
+                photoUrl: newUser.photoUrl,
+                address: newUser.address,
+                phone: newUser.phone,
+                dob: newUser.dob,
+                socialMedia: newUser.socialMedia,
+                courses: newUser.courses
+            }
         });
     } catch (error) {
         console.error("Registration error:", error);
@@ -99,6 +143,10 @@ export const loginUser = async (
             return;
         }
 
+        // Update last login time
+        user.loginActivity.lastLogin = new Date();
+        await user.save();
+
         // Generate JWT token
         const accessToken = sign(
             { sub: user._id },
@@ -114,7 +162,13 @@ export const loginUser = async (
                 id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email
+                email: user.email,
+                photoUrl: user.photoUrl,
+                address: user.address,
+                phone: user.phone,
+                dob: user.dob,
+                socialMedia: user.socialMedia,
+                courses: user.courses
             }
         });
     } catch (error) {

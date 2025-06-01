@@ -6,6 +6,25 @@ export interface AuthUser {
     lastName: string;
     email: string;
     password: string;
+    photoUrl: string;
+    address: string;
+    phone: string;
+    dob: Date;
+    socialMedia: {
+        facebook: string;
+        twitter: string;
+        linkedin: string;
+        instagram: string;
+    };
+    courses: Array<{
+        id: number;
+        name: string;
+        progress: number;
+    }>;
+    loginActivity: {
+        firstLogin: Date;
+        lastLogin: Date;
+    };
     createdAt: Date;
     updatedAt: Date;
 }
@@ -27,6 +46,37 @@ const authUserSchema = new Schema<AuthUser>({
     password: {
         type: String,
         required: true
+    },
+    photoUrl: {
+        type: String,
+        default: "https://randomuser.me/api/portraits/men/33.jpg"
+    },
+    address: {
+        type: String,
+        default: "Not provided"
+    },
+    phone: {
+        type: String,
+        default: "Not provided"
+    },
+    dob: {
+        type: Date,
+        default: null
+    },
+    socialMedia: {
+        facebook: { type: String, default: "" },
+        twitter: { type: String, default: "" },
+        linkedin: { type: String, default: "" },
+        instagram: { type: String, default: "" }
+    },
+    courses: [{
+        id: Number,
+        name: String,
+        progress: Number
+    }],
+    loginActivity: {
+        firstLogin: { type: Date, default: Date.now },
+        lastLogin: { type: Date, default: Date.now }
     }
 }, {
     timestamps: true
