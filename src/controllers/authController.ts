@@ -11,6 +11,11 @@ interface RegisterRequest {
     password: string;
 }
 
+interface LoginRequest {
+    email: string;
+    password: string;
+}
+
 export const registerUser = async (
     req: Request<{}, {}, RegisterRequest>,
     res: Response,
@@ -58,6 +63,62 @@ export const registerUser = async (
         });
     } catch (error) {
         console.error("Registration error:", error);
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "An unexpected error occurred" });
+        }
+    }
+};
+
+export const loginUser = async (
+    req: Request<{}, {}, LoginRequest>,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { email, password } = req.body;
+
+        // Validation
+        if (!email || !password) {
+            res.status(400).json({ error: "Email and password are required" });
+            return;
+        }
+
+        // Find user by email
+        const user = await authModel.findOne({ email });
+        if (!user) {
+            res.status(401).json({ error: "Invalid email or password" });
+            return;
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            res.status(401).json({ error: "Invalid email or password" });
+            return;
+        }
+
+        // Generate JWT token
+        const accessToken = sign(
+            { sub: user._id },
+            config.jwtSecret as string,
+            { expiresIn: '24h' }
+        );
+
+        // Return response
+        res.status(200).json({
+            message: "Login successful",
+            accessToken,
+            user: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        console.error("Login error:", error);
         if (error instanceof Error) {
             res.status(500).json({ error: error.message });
         } else {
