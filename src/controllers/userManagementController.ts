@@ -191,4 +191,117 @@ export const deleteUser = async (req: Request, res: Response) => {
         }
         res.status(500).json({ error: "Failed to delete user" });
     }
+};
+
+// Export users
+export const exportUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await authModel.find().select('firstName lastName email phone photoUrl status userType createdAt updatedAt');
+        
+        // Transform the data to match the frontend requirements
+        const transformedUsers = users.map(user => ({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            mobile: user.phone,
+            photo: user.photoUrl,
+            status: user.status || 'Active',
+            userType: user.userType,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        }));
+
+        res.status(200).json(transformedUsers);
+    } catch (error) {
+        console.error("Error exporting users:", error);
+        res.status(500).json({ error: "Failed to export users" });
+    }
+};
+
+// Import users
+export const importUsers = async (req: Request, res: Response) => {
+    try {
+        const users = req.body;
+
+        if (!Array.isArray(users)) {
+            return res.status(400).json({ error: "Invalid input format. Expected an array of users." });
+        }
+
+        const results = [];
+        const errors = [];
+
+        for (const userData of users) {
+            try {
+                const { firstName, lastName, email, mobile, userType } = userData;
+
+                // Validate required fields
+                if (!firstName || !lastName || !email || !userType) {
+                    errors.push({
+                        email: email || 'unknown',
+                        error: "Missing required fields"
+                    });
+                    continue;
+                }
+
+                // Check if user already exists
+                const existingUser = await authModel.findOne({ email });
+                if (existingUser) {
+                    errors.push({
+                        email,
+                        error: "User already exists"
+                    });
+                    continue;
+                }
+
+                // Hash default password
+                const hashSalt = 10;
+                const hashedPassword = await bcrypt.hash("Password123", hashSalt);
+
+                // Create new user with default values
+                const newUser = await authModel.create({
+                    firstName,
+                    lastName,
+                    email,
+                    password: hashedPassword,
+                    phone: mobile || "Not provided",
+                    photoUrl: "https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg",
+                    status: 'Active',
+                    userType,
+                    address: "Not provided",
+                    dob: null,
+                    socialMedia: {
+                        facebook: "",
+                        twitter: "",
+                        linkedin: "",
+                        instagram: ""
+                    },
+                    courses: [],
+                    loginActivity: {
+                        firstLogin: new Date(),
+                        lastLogin: new Date()
+                    }
+                });
+
+                results.push({
+                    email: newUser.email,
+                    status: "success"
+                });
+            } catch (error) {
+                errors.push({
+                    email: userData.email || 'unknown',
+                    error: error instanceof Error ? error.message : "Unknown error"
+                });
+            }
+        }
+
+        res.status(200).json({
+            message: "Import completed",
+            results,
+            errors
+        });
+    } catch (error) {
+        console.error("Error importing users:", error);
+        res.status(500).json({ error: "Failed to import users" });
+    }
 }; 
