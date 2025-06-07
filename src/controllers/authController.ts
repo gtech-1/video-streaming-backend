@@ -101,6 +101,7 @@ export const registerUser = async (
                 address: newUser.address,
                 phone: newUser.phone,
                 dob: newUser.dob,
+                userType: newUser.userType,
                 socialMedia: newUser.socialMedia,
                 courses: newUser.courses
             }
@@ -167,6 +168,7 @@ export const loginUser = async (
                 address: user.address,
                 phone: user.phone,
                 dob: user.dob,
+                userType: user.userType,
                 socialMedia: user.socialMedia,
                 courses: user.courses
             }

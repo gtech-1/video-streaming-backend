@@ -10,6 +10,8 @@ export interface AuthUser {
     address: string;
     phone: string;
     dob: Date;
+    status: 'Active' | 'Inactive';
+    userType: 'members' | 'admins';
     socialMedia: {
         facebook: string;
         twitter: string;
@@ -62,6 +64,17 @@ const authUserSchema = new Schema<AuthUser>({
     dob: {
         type: Date,
         default: null
+    },
+    status: {
+        type: String,
+        enum: ['Active', 'Inactive'],
+        default: 'Active'
+    },
+    userType: {
+        type: String,
+        enum: ['members', 'admins'],
+        default: 'members',
+        required: true
     },
     socialMedia: {
         facebook: { type: String, default: "" },

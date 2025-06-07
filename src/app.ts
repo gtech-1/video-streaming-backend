@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/authRoutes';
 import profileRoutes from './routes/profileRoutes';
+import userManagementRoutes from './routes/userManagementRoutes';
 
 dotenv.config();
 
@@ -20,9 +21,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/myapp')
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/users', userManagementRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
