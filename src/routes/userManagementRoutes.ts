@@ -1,5 +1,5 @@
 import express, { RequestHandler } from "express";
-import { getAllUsers, createUser, updateUser, deleteUser } from "../controllers/userManagementController";
+import { getAllUsers, createUser, updateUser, deleteUser, exportUsers, importUsers } from "../controllers/userManagementController";
 
 const router = express.Router();
 
@@ -14,5 +14,11 @@ router.put("/:userId", updateUser as RequestHandler);
 
 // Delete user
 router.delete("/:userId", deleteUser as RequestHandler);
+
+// Export users
+router.get("/export", exportUsers as RequestHandler);
+
+// Import users
+router.post("/import", importUsers as RequestHandler);
 
 export default router; 
