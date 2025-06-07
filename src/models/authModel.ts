@@ -1,15 +1,17 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
+// 1. Interface for your user data
 export interface AuthUser {
-    _id: string;
     firstName: string;
     lastName: string;
     email: string;
     password: string;
+    role: string; // "user" or "admin"
+    status?: string;
     photoUrl: string;
     address: string;
     phone: string;
-    dob: Date;
+    dob: Date | null;
     socialMedia: {
         facebook: string;
         twitter: string;
@@ -29,51 +31,33 @@ export interface AuthUser {
     updatedAt: Date;
 }
 
-const authUserSchema = new Schema<AuthUser>({
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    photoUrl: {
-        type: String,
-        default: "https://randomuser.me/api/portraits/men/33.jpg"
-    },
-    address: {
-        type: String,
-        default: "Not provided"
-    },
-    phone: {
-        type: String,
-        default: "Not provided"
-    },
-    dob: {
-        type: Date,
-        default: null
-    },
+// 2. Extend Document so Mongoose knows it's a full model
+export interface AuthUserDocument extends AuthUser, Document {}
+
+const authUserSchema = new Schema<AuthUserDocument>({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
+    status: { type: Boolean, default: true },
+    photoUrl: { type: String, default: "https://randomuser.me/api/portraits/men/33.jpg" },
+    address: { type: String, default: "Not provided" },
+    phone: { type: String, default: "Not provided" },
+    dob: { type: Date, default: null },
     socialMedia: {
         facebook: { type: String, default: "" },
         twitter: { type: String, default: "" },
         linkedin: { type: String, default: "" },
         instagram: { type: String, default: "" }
     },
-    courses: [{
-        id: Number,
-        name: String,
-        progress: Number
-    }],
+    courses: [
+        {
+            id: Number,
+            name: String,
+            progress: Number
+        }
+    ],
     loginActivity: {
         firstLogin: { type: Date, default: Date.now },
         lastLogin: { type: Date, default: Date.now }
@@ -82,4 +66,5 @@ const authUserSchema = new Schema<AuthUser>({
     timestamps: true
 });
 
-export default mongoose.model<AuthUser>("authUser", authUserSchema); 
+// 3. Export with proper typing
+export default mongoose.model<AuthUserDocument>("authUser", authUserSchema);

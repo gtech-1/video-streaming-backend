@@ -5,8 +5,8 @@ export interface IUser extends Document {
   email: string;
   mobile: string;
   photo: string;
-  status: 'Active' | 'Inactive';
-  userType: 'members' | 'admins';
+  status: 'active' | 'inactive';
+  userType: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,8 +17,8 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     mobile: { type: String, required: true, trim: true },
     photo: { type: String, required: true, trim: true },
-    status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
-    userType: { type: String, enum: ['members', 'admins'], required: true }
+    status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+    userType: { type: String, enum: ['user', 'admin'], required: true }
   },
   { timestamps: true }
 );

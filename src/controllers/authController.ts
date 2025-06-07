@@ -47,6 +47,8 @@ export const registerUser = async (
             lastName,
             email,
             password: hashedPassword,
+            role:"user",//default role
+            status: true, // default status
             // Specific default values
             photoUrl: "https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg",
             address: "Not provided",
@@ -97,6 +99,8 @@ export const registerUser = async (
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
                 email: newUser.email,
+                role: newUser.role,
+                status: newUser.status,
                 photoUrl: newUser.photoUrl,
                 address: newUser.address,
                 phone: newUser.phone,
@@ -163,6 +167,7 @@ export const loginUser = async (
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
+                role:user.role,
                 photoUrl: user.photoUrl,
                 address: user.address,
                 phone: user.phone,

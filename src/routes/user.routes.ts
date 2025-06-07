@@ -10,8 +10,8 @@ interface UserBody {
   email?: string;
   mobile?: string;
   photo?: string;
-  status?: 'Active' | 'Inactive';
-  userType?: 'members' | 'admins';
+  status?: 'active' | 'inactive';
+  userType?: 'user' | 'admin';
 }
 
 const router: Router = express.Router();
@@ -35,7 +35,7 @@ const createUser: RequestHandler = async (req, res) => {
       email,
       mobile,
       photo: photo || 'https://via.placeholder.com/150',
-      status: status || 'Active',
+      status: status || 'active',
       userType
     });
     const savedUser = await user.save();
