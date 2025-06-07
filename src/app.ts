@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/myapp')
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/profile', profileRoutes);
+app.use('/api/profile', profileRoutes);
 app.use('/api/users', userManagementRoutes);
 
 // Health check endpoint
