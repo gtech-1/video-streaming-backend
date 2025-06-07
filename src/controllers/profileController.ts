@@ -1,6 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Express } from "express";
 import authModel from "../models/authModel";
 import bcrypt from "bcrypt";
+
+// Add type declaration for multer file
+declare global {
+  namespace Express {
+    interface Request {
+      file?: any;
+    }
+  }
+}
 
 interface UpdateProfileRequest {
     firstName?: string;
@@ -52,7 +61,7 @@ export const getProfile = async (
 
 // Update user profile
 export const updateProfile = async (
-    req: Request<{}, {}, UpdateProfileRequest>,
+    req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
@@ -64,6 +73,11 @@ export const updateProfile = async (
         }
 
         const updateData = req.body;
+
+        // If a new photo was uploaded, set photoUrl
+        if (req.file && req.file.path) {
+            updateData.photoUrl = req.file.path;
+        }
 
         // If email is being updated, check if it's already in use
         if (updateData.email) {

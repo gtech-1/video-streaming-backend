@@ -1,6 +1,7 @@
 import express, { RequestHandler } from "express";
 import { getProfile, updateProfile, updatePassword } from "../controllers/profileController";
 import { authenticateToken } from "../middleware/auth";
+import { upload } from '../config/cloudinary';
 
 const profileRouter = express.Router();
 
@@ -11,7 +12,7 @@ profileRouter.use(authenticateToken as RequestHandler);
 profileRouter.get("/", getProfile as RequestHandler);
 
 // Update user profile
-profileRouter.put("/", updateProfile as RequestHandler);
+profileRouter.put("/", upload.single('photo'), updateProfile as RequestHandler);
 
 // Update password
 profileRouter.put("/password", updatePassword as RequestHandler);
