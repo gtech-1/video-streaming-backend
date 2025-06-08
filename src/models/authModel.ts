@@ -6,12 +6,13 @@ export interface AuthUser {
     lastName: string;
     email: string;
     password: string;
-    role: string; // "user" or "admin"
+    role: string; 
     status?: string;
     photoUrl: string;
     address: string;
     phone: string;
     dob: Date | null;
+    userType:string;
     socialMedia: {
         facebook: string;
         twitter: string;
@@ -31,20 +32,53 @@ export interface AuthUser {
     updatedAt: Date;
 }
 
-// 2. Extend Document so Mongoose knows it's a full model
 export interface AuthUserDocument extends AuthUser, Document {}
 
 const authUserSchema = new Schema<AuthUserDocument>({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
-    status: { type: Boolean, default: true },
-    photoUrl: { type: String, default: "https://randomuser.me/api/portraits/men/33.jpg" },
-    address: { type: String, default: "Not provided" },
-    phone: { type: String, default: "Not provided" },
-    dob: { type: Date, default: null },
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    photoUrl: {
+        type: String,
+        default: "https://randomuser.me/api/portraits/men/33.jpg"
+    },
+    address: {
+        type: String,
+        default: "Not provided"
+    },
+    phone: {
+        type: String,
+        default: "Not provided"
+    },
+    dob: {
+        type: Date,
+        default: null
+    },
+    status: {
+        type: String,
+        enum: ['Active', 'Inactive'],
+        default: 'Active'
+    },
+    userType: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+        required: true
+    },
     socialMedia: {
         facebook: { type: String, default: "" },
         twitter: { type: String, default: "" },
