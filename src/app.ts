@@ -6,6 +6,8 @@ import userRoutes from './routes/user.routes';
 import authRoutes from './routes/authRoutes';
 import profileRoutes from './routes/profileRoutes';
 import userManagementRoutes from './routes/userManagementRoutes';
+import courseRoutes from './routes/courseRoutes';
+import videoRoutes from './routes/videoRoutes';
 
 dotenv.config();
 
@@ -24,6 +26,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/myapp')
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/users', userManagementRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/videos', videoRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
