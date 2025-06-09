@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const users = await authModel.find().select('firstName lastName email phone photoUrl status userType createdAt updatedAt');
-        console.log("Fetched users:", users);
+        //console.log("Fetched users:", users);
         // Transform the data to match the frontend requirements
         const transformedUsers = users.map(user => ({
             _id: user._id,
