@@ -1,11 +1,19 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Validate environment variables
+if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  throw new Error('Cloudinary credentials are not properly configured in environment variables');
+}
 
 cloudinary.config({
-  cloud_name: 'dtmvsodv6',
-  api_key: '381594341947692',
-  api_secret: '811gdr7tR04wC7VuJRZ7Joir9LE'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 const storage = new CloudinaryStorage({
