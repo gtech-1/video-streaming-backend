@@ -1,18 +1,20 @@
 import express, { RequestHandler } from 'express';
 import { getCourseVideos, createVideo, updateVideo, deleteVideo } from '../controllers/videoController';
 import { upload } from '../config/cloudinary';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken, requireAdmin } from '../middleware/auth';
 
 const videoRouter = express.Router();
 
 // All routes require authentication
 videoRouter.use(authenticateToken as RequestHandler);
 
-// Get all videos for a specific course
+// Get all videos for a specific course - accessible to both members and admins
 videoRouter.get('/course/:courseId', getCourseVideos as RequestHandler);
 
+// Admin only routes
 // Create a new video
 videoRouter.post('/course/:courseId', 
+  requireAdmin as RequestHandler,
   upload.fields([
     { name: 'video', maxCount: 1 },
     { name: 'thumbnail', maxCount: 1 }
@@ -22,6 +24,7 @@ videoRouter.post('/course/:courseId',
 
 // Update a video
 videoRouter.put('/:id', 
+  requireAdmin as RequestHandler,
   upload.fields([
     { name: 'video', maxCount: 1 },
     { name: 'thumbnail', maxCount: 1 }
@@ -30,6 +33,9 @@ videoRouter.put('/:id',
 );
 
 // Delete a video
-videoRouter.delete('/:id', deleteVideo as RequestHandler);
+videoRouter.delete('/:id', 
+  requireAdmin as RequestHandler,
+  deleteVideo as RequestHandler
+);
 
 export default videoRouter; 

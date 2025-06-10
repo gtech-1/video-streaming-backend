@@ -148,9 +148,12 @@ export const loginUser = async (
         user.loginActivity.lastLogin = new Date();
         await user.save();
 
-        // Generate JWT token
+        // Generate JWT token with user type
         const accessToken = sign(
-            { sub: user._id },
+            { 
+                sub: user._id,
+                userType: user.userType 
+            },
             config.jwtSecret as string,
             { expiresIn: '24h' }
         );
@@ -175,10 +178,6 @@ export const loginUser = async (
         });
     } catch (error) {
         console.error("Login error:", error);
-        if (error instanceof Error) {
-            res.status(500).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: "An unexpected error occurred" });
-        }
+        res.status(500).json({ error: "Internal server error" });
     }
 }; 

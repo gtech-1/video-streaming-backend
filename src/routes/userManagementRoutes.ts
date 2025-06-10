@@ -1,9 +1,16 @@
 import express, { RequestHandler } from "express";
-import { getAllUsers, createUser, updateUser, deleteUser, exportUsers, importUsers } from "../controllers/userManagementController";
+import { getAllUsers, createUser, updateUser, deleteUser, exportUsers, importUsers, getMemberProfiles } from "../controllers/userManagementController";
+import { requireAdmin, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();
 
-// Get all users
+// Get member profiles - accessible by both members and admins
+router.get("/members", authenticateToken as RequestHandler, getMemberProfiles as RequestHandler);
+
+// Admin only routes
+router.use(requireAdmin as RequestHandler);
+
+// Get all users (including admins)
 router.get("/", getAllUsers as RequestHandler);
 
 // Create new user

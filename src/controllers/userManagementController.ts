@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import authModel from "../models/authModel";
 import bcrypt from "bcrypt";
 
-// Get all users with selected fields
+// Get all users with selected fields (admin only)
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const users = await authModel.find().select('firstName lastName email phone photoUrl status userType createdAt updatedAt');
@@ -25,6 +25,32 @@ export const getAllUsers = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error fetching users:", error);
         res.status(500).json({ error: "Failed to fetch users" });
+    }
+};
+
+// Get all member profiles (accessible by both members and admins)
+export const getMemberProfiles = async (req: Request, res: Response) => {
+    try {
+        const users = await authModel.find({ userType: 'members' })
+            .select('firstName lastName email phone photoUrl status userType createdAt updatedAt');
+        
+        const transformedUsers = users.map(user => ({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            mobile: user.phone,
+            photo: user.photoUrl,
+            status: user.status || 'Active',
+            userType: user.userType,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        }));
+
+        res.status(200).json(transformedUsers);
+    } catch (error) {
+        console.error("Error fetching member profiles:", error);
+        res.status(500).json({ error: "Failed to fetch member profiles" });
     }
 };
 
