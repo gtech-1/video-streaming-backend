@@ -8,6 +8,7 @@ import profileRoutes from './routes/profileRoutes';
 import userManagementRoutes from './routes/userManagementRoutes';
 import courseRoutes from './routes/courseRoutes';
 import videoRoutes from './routes/videoRoutes';
+import memberDashboardRoutes from './routes/memberDashboard.routes';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/users', userManagementRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/member-dashboard', memberDashboardRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

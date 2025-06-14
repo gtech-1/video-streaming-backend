@@ -3,6 +3,7 @@ import authModel from "../models/authModel";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { config } from "../config/config";
+import { createMemberDashboard } from "./memberDashboard.controller";
 
 interface RegisterRequest {
     firstName: string;
@@ -80,6 +81,16 @@ export const registerUser = async (
                 lastLogin: new Date()
             }
         });
+
+        // Create member dashboard if user is a member
+        if (newUser.userType === 'members') {
+            try {
+                await createMemberDashboard(newUser._id.toString());
+            } catch (error) {
+                console.error("Error creating member dashboard:", error);
+                // Don't fail the registration if dashboard creation fails
+            }
+        }
 
         // Generate JWT token
         const accessToken = sign(
